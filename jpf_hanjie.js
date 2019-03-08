@@ -56,12 +56,55 @@
 //run the init function when the page loads
 window.onload = init;
 
+var puzzleCells;
+
 function init() {
       //insert the title for the first puzzle 
-      document.getElementById("puzzleTitle").innerHTML = "puzzle 1";
+      document.getElementById("puzzleTitle").innerHTML = "Puzzle 1";
 
       //insert the html code for the first puzzle table
-      document.getElementById("puzzle").innerHTML = drawPuzzle(puzzleHint, puzzleRating, puzzle1);
+      document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle1Hint, puzzle1Rating, puzzle1);
+
+      //add event handler for the puzzle buttons
+      var puzzleButtons = document.getElementsByClassName("puzzles");
+      for (var i = 0; i < puzzleButtons.length; i++) {
+            puzzleButtons[i].onclick = swapPuzzle;
+      }
+      setupPuzzle();
+}
+
+function swapPuzzle(e) {
+      //retrieve the ID of the clicked button
+      var puzzleID = e.target.id;
+
+      //retrieve the value of the clicked button
+      var puzzleTitle = e.target.value;
+      document.getElementById("puzzleTitle").innerHTML = puzzleTitle;
+
+      //display the puzzle based on the value of the puzzleID variable
+      switch (puzzleID) {
+            case "puzzle1":
+                  document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle1Hint, puzzle1Rating, puzzle1);
+                  break;
+            case "puzzle2":
+                  document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle2Hint, puzzle2Rating, puzzle2);
+            default:
+                  break;
+            case "puzzle3":
+                  document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle3Hint, puzzle2Rating, puzzle3);
+                  break;
+      }
+      setupPuzzle();
+}
+
+function setupPuzzle() {
+      //match all of the data cells in the puzzle
+      puzzleCells = document.querySelectorAll("table#hanjieGrid td")
+
+      //set the initial color of each cell to gold
+      for (var i = 0; i < puzzleCells.length; i++) {
+            puzzleCells[i].style.backgroundColor = "rgb(233, 207, 29)";
+      }
 }
 
 
