@@ -59,6 +59,8 @@ window.onload = init;
 var puzzleCells;
 var cellBackground;
 
+
+
 function init() {
       //insert the title for the first puzzle 
       document.getElementById("puzzleTitle").innerHTML = "Puzzle 1";
@@ -72,10 +74,19 @@ function init() {
             puzzleButtons[i].onclick = swapPuzzle;
       }
       setupPuzzle();
-}
 
-//add an event listner for the mouseup event
-document.addEventListener("mouseup", endBackground);
+
+      //add an event listner for the mouseup event
+      document.addEventListener("mouseup", endBackground);
+
+      //add an event listener to the show solution button
+      document.getElementById("solve").addEventListener("click", function () {
+            //removing the inline background color style from each cell
+            for (var i = 0; i < puzzleCells.length; i++) {
+                  puzzleCells[i].style.backgroundColor = "";
+            }
+      });
+}
 
 function swapPuzzle(e) {
       //retrieve the ID of the clicked button
@@ -110,17 +121,48 @@ function setupPuzzle() {
             puzzleCells[i].style.backgroundColor = "rgb(233, 207, 29)";
             //set the cell background color in response to the mousedown event
             puzzleCells[i].onmousedown = setBackground;
+            //use a pencil image as the courser
+            puzzleCells[i].style.cursor = "url(jpf_pencil.png), pointer";
       }
+      //create object collections of the build and empty cells
+      var filled = document.querySelectorAll("table#hanjiGrid td.filled");
+      var empty = document.querySelectorAll("table#hanjiGrid td.empty");
+
+      //and event listener to highlight incorrect cells
+      document.getElementById("peek").addEventListener("click", function () {
+            //display incorrect white cells in pink 
+            for (var i = 0; i < filled.length; i++) {
+                  if (filled[i].style.backgroundColor == "rgb(255, 255, 255)") {
+                        filled[i].style.backgroundColor = "rgb(255, 211, 211)";
+                  }
+            }
+      });
+
 }
 
 function setBackground(e) {
-      cellBackground = "rgb(101, 101, 101)";
+      var cursorType;
+      // cellBackground = "rgb(101, 101, 101)";
+      //set the backgrpund based on the keyboard key 
+      if (e.shiftKey) {
+            cellBackground = "rgb(233, 207, 29)";
+            cursorType = "url(jpf_eraser.png), cell";
+      } else if (e.altKey) {
+            cellBackground = "rgb(255, 255, 255)";
+            cursorType = "url(jpf_cross.png), crosshair";
+      } else {
+            cellBackground = "rgb(101, 101, 101)";
+            cursorType = "url(jpf_pencil.png), pointer";
+      }
       e.target.style.backgroundColor = cellBackground;
 
       //create an event listener for every puzzle cell
       for (var i = 0; i < puzzleCells.length; i++) {
             puzzleCells[i].addEventListener("mouseenter", extendBackground);
+            puzzleCells[i].style.cursor = cursorType;
       }
+      //prevent the default action of seclecting table text
+      e.preventDefault();
 
 }
 
@@ -133,6 +175,7 @@ function endBackground() {
       //remove the event listener for every puzzle cell
       for (var i = 0; i < puzzleCells.length; i++) {
             puzzleCells[i].removeEventListener("mouseenter", extendBackground);
+
       }
 
 }
