@@ -89,27 +89,31 @@ function init() {
 }
 
 function swapPuzzle(e) {
-      //retrieve the ID of the clicked button
-      var puzzleID = e.target.id;
+      if (confirm("You wil lose all of your work on the puzzle! Continue?")) {
+            var puzzleID
 
-      //retrieve the value of the clicked button
-      var puzzleTitle = e.target.value;
-      document.getElementById("puzzleTitle").innerHTML = puzzleTitle;
+            //retrieve the ID of the clicked button
+            var puzzleID = e.target.id;
 
-      //display the puzzle based on the value of the puzzleID variable
-      switch (puzzleID) {
-            case "puzzle1":
-                  document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle1Hint, puzzle1Rating, puzzle1);
-                  break;
-            case "puzzle2":
-                  document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle2Hint, puzzle2Rating, puzzle2);
-            default:
-                  break;
-            case "puzzle3":
-                  document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle3Hint, puzzle2Rating, puzzle3);
-                  break;
+            //retrieve the value of the clicked button
+            var puzzleTitle = e.target.value;
+            document.getElementById("puzzleTitle").innerHTML = puzzleTitle;
+
+            //display the puzzle based on the value of the puzzleID variable
+            switch (puzzleID) {
+                  case "puzzle1":
+                        document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle1Hint, puzzle1Rating, puzzle1);
+                        break;
+                  case "puzzle2":
+                        document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle2Hint, puzzle2Rating, puzzle2);
+                  default:
+                        break;
+                  case "puzzle3":
+                        document.getElementById("puzzle").innerHTML = drawPuzzle(puzzle3Hint, puzzle2Rating, puzzle3);
+                        break;
+            }
+            setupPuzzle();
       }
-      setupPuzzle();
 }
 
 function setupPuzzle() {
@@ -125,8 +129,8 @@ function setupPuzzle() {
             puzzleCells[i].style.cursor = "url(jpf_pencil.png), pointer";
       }
       //create object collections of the build and empty cells
-      var filled = document.querySelectorAll("table#hanjiGrid td.filled");
-      var empty = document.querySelectorAll("table#hanjiGrid td.empty");
+      var filled = document.querySelectorAll("table#hanjieGrid td.filled");
+      var empty = document.querySelectorAll("table#hanjieGrid td.empty");
 
       //and event listener to highlight incorrect cells
       document.getElementById("peek").addEventListener("click", function () {
@@ -136,8 +140,39 @@ function setupPuzzle() {
                         filled[i].style.backgroundColor = "rgb(255, 211, 211)";
                   }
             }
+            //display inccorrect cells in red
+            for (var i = 0; i < empty.length; i++) {
+                  if (empty[i].style.backgroundColor == "rgb(101, 101, 101)") {
+                        empty[i].style.backgroundColor = "rgb(255, 101, 101)";
+                  }
+            }
+            //remove the hints after 0.5 sec
+            setTimeout(
+                  function () {
+                        //change pink cells to white and red cells to gray
+                        for (var i = 0; i < puzzleCells.length; i++) {
+                              if (puzzleCells[i].style.backgroundColor == "rgb(255, 211, 211)") {
+                                    puzzleCells[i].style.backgroundColor = "rgb(255, 255, 255)";
+                              }
+                              if (puzzleCells[i].style.backgroundColor == "rgb(255, 101, 101)") {
+                                    puzzleCells[i].style.backgroundColor = "rgb(101, 101, 101)";
+                              }
+                        }
+                  }, 500);
       });
-
+      //check the puzzle solution
+      document.getElementById("hanjieGrid").addEventListener("mouseup", function () {
+            var solved = true;
+            for (var i = 0; i < puzzleCells.length; i++) {
+                  if ((puzzleCells[i].className == "filled" && puzzleCells[i].style.backgroundColor !== "rgb(101, 101, 101)") || (puzzleCells[i].className == "empty" && puzzleCells[i].style.backgroundColor == "rgb(101, 101, 101)")) {
+                        solved = false;
+                        break;
+                  }
+            }
+            if (solved) {
+                  alert("You solved the PUZZLE!");
+            }
+      });
 }
 
 function setBackground(e) {
